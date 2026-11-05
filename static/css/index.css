@@ -1,0 +1,295 @@
+/* Publication styles from the Nerfies template (CC BY-SA 4.0), reduced to the rules
+   this page uses, plus figure, legend and table styles for AMDP. */
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  background: #fff;
+}
+
+.publication-title,
+.publication-authors {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors a {
+  color: hsl(204, 86%, 53%) !important;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-affiliation {
+  margin-top: 0.35rem;
+}
+
+.publication-venue {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: bold;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.publication-venue a {
+  color: #555;
+}
+
+.publication-venue a:hover {
+  text-decoration: underline;
+}
+
+.hero-body {
+  padding-bottom: 1.5rem;
+}
+
+.section {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Icons */
+.fa {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5em;
+  flex: none;
+}
+
+/* Keep Bulma's .content from restyling nested elements */
+.content h3.title {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.content figure,
+.content figure figcaption {
+  font-style: normal;
+  text-align: left;
+}
+
+/* Figures */
+.paper-figure {
+  margin: 1.5rem 0 !important;
+}
+
+.teaser .paper-figure {
+  margin-top: 0;
+  padding: 0 1.5rem;
+}
+
+.paper-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.paper-figure > figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #4a4a4a;
+}
+
+.plot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.plot-grid figure {
+  margin: 0 !important;
+}
+
+.plot-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.content .plot-grid figcaption {
+  margin-top: 0.25rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #4a4a4a;
+}
+
+/* Legends */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1.1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #363636;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.legend i {
+  display: inline-block;
+  width: 1.5rem;
+  height: 3px;
+  margin-right: 0.4rem;
+  border-radius: 1px;
+}
+
+/* Off-policy text beside its plot */
+.side-by-side {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  gap: 2rem;
+  align-items: center;
+}
+
+.side-by-side .paper-figure {
+  margin: 0 !important;
+}
+
+/* Display math scrolls on its own on narrow screens. This needs a wrapper because
+   MathJax sets an inline min-width on tagged equations, and Bulma hides overflow on html. */
+.math-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 1em;
+}
+
+/* Algorithm box */
+.algorithm {
+  padding: 1rem 1.25rem;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.content .algorithm p {
+  margin-bottom: 0.5rem;
+}
+
+.content .algorithm ol {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Runtime table */
+.table-container {
+  margin: 1.25rem 0;
+}
+
+.runtime-table {
+  font-size: 0.9rem;
+}
+
+.runtime-table caption {
+  caption-side: top;
+  padding-bottom: 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #4a4a4a;
+}
+
+.runtime-table td,
+.runtime-table th {
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.content table.runtime-table th.group {
+  text-align: center;
+}
+
+.content table.runtime-table tbody tr:last-child td {
+  border-bottom-width: 1px;
+}
+
+.content table.runtime-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* BibTeX */
+.bibtex {
+  position: relative;
+}
+
+.bibtex pre {
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+.copy-button[hidden] {
+  display: none;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+/* Footer */
+.footer {
+  margin-top: 1.5rem;
+  padding: 2rem 1.5rem;
+}
+
+.footer-links {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .plot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  /* The diagram's labels are unreadable when scaled to phone width */
+  .pipeline-scroll {
+    overflow-x: auto;
+  }
+
+  .pipeline-scroll img {
+    min-width: 640px;
+  }
+
+  .hero-body {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .teaser .paper-figure {
+    padding: 0 1rem;
+  }
+
+  .publication-title {
+    font-size: 1.6rem !important;
+  }
+
+  .side-by-side {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .plot-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

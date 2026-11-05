@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>AMDP: Adjoint Matching Diffusion Policy</title>
+  <meta name="description" content="Scalable Maximum Entropy Reinforcement Learning for Diffusion Policies via Adjoint Matching. Project page for the NeurIPS 2026 paper by Thilges, Celik, Blessing, Gospodinov and Neumann.">
+  <meta name="keywords" content="Diffusion Policy, Adjoint Matching, Stochastic Optimal Control, Maximum Entropy Reinforcement Learning, Reinforcement Learning">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AMDP: Adjoint Matching Diffusion Policy">
+  <meta property="og:description" content="Scalable Maximum Entropy Reinforcement Learning for Diffusion Policies via Adjoint Matching (NeurIPS 2026).">
+  <link rel="icon" href="data:,">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      options: { enableMenu: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<!-- Icons: Font Awesome Free 5.15.1 by @fontawesome, https://fontawesome.com, license CC BY 4.0, https://fontawesome.com/license/free -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-pdf" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48zm250.2-143.7c-12.2-12-47-8.7-64.4-6.5-17.2-10.5-28.7-25-36.8-46.3 3.9-16.1 10.1-40.6 5.4-56-4.2-26.2-37.8-23.6-42.6-5.9-4.4 16.1-.4 38.5 7 67.1-10 23.9-24.9 56-35.4 74.4-20 10.3-47 26.2-51 46.2-3.3 15.8 26 55.2 76.1-31.2 22.4-7.4 46.8-16.5 68.4-20.1 18.9 10.2 41 17 55.8 17 25.5 0 28-28.2 17.5-38.7zm-198.1 77.8c5.1-13.7 24.5-29.5 30.4-35-19 30.3-30.4 35.7-30.4 35zm81.6-190.6c7.4 0 6.7 32.1 1.8 40.8-4.4-13.9-4.3-40.8-1.8-40.8zm-24.4 136.6c9.7-16.9 18-37 24.7-54.7 8.3 15.1 18.9 27.2 30.1 35.5-20.8 4.3-38.9 13.1-54.8 19.2zm131.6-5s-5 6-37.3-7.8c35.1-2.6 40.9 5.4 37.3 7.8z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 384 512"><path fill="currentColor" d="M288 248v28c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-28c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm-12 72H108c-6.6 0-12 5.4-12 12v28c0 6.6 5.4 12 12 12h168c6.6 0 12-5.4 12-12v-28c0-6.6-5.4-12-12-12zm108-188.1V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V48C0 21.5 21.5 0 48 0h204.1C264.8 0 277 5.1 286 14.1L369.9 98c9 8.9 14.1 21.2 14.1 33.9zm-128-80V128h76.1L256 51.9zM336 464V176H232c-13.3 0-24-10.7-24-24V48H48v416h288z"/></symbol>
+  <symbol id="i-github" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 512 512"><path fill="currentColor" d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 448 512"><path fill="currentColor" d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></symbol>
+</svg>
+
+<header class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-2 publication-title">Scalable Maximum Entropy Reinforcement Learning for Diffusion Policies via Adjoint Matching</h1>
+
+      <!-- TODO: add personal pages for Serge Thilges and Emiliyan Gospodinov. -->
+      <div class="is-size-5 publication-authors">
+        <span class="author-block">Serge Thilges,</span>
+        <span class="author-block"><a href="https://onur4229.github.io/">Onur Celik</a>,</span>
+        <span class="author-block"><a href="https://denisbless.github.io">Denis Blessing</a>,</span>
+        <span class="author-block">Emiliyan Gospodinov,</span>
+        <span class="author-block"><a href="https://alr.iar.kit.edu/21_65.php">Gerhard Neumann</a></span>
+      </div>
+      <div class="is-size-6 publication-authors publication-affiliation">
+        <a href="https://alr.iar.kit.edu/">Autonomous Learning Robots</a>, Karlsruhe Institute of Technology
+      </div>
+      <p class="publication-venue">
+        <a href="https://neurips.cc/Conferences/2026">NeurIPS 2026</a>
+      </p>
+
+      <div class="buttons is-centered link-block">
+        <a class="button is-rounded is-dark" href="https://openreview.net/forum?id=h8DYJlF7Jt">
+          <svg class="fa" aria-hidden="true"><use href="#i-pdf"/></svg><span>Paper</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://arxiv.org/abs/2606.22630">
+          <svg class="fa" aria-hidden="true"><use href="#i-doc"/></svg><span>arXiv</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://github.com/serathilg/amdp">
+          <svg class="fa" aria-hidden="true"><use href="#i-github"/></svg><span>Code</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="teaser">
+  <div class="container is-max-desktop">
+    <figure class="paper-figure">
+      <div class="pipeline-scroll">
+      <img src="./static/images/amdp_pipeline.svg"
+           alt="Diagram of AMDP training. Sample paths of an SDE start at X0 equal to 0 and end at a terminal sample X1, which is squashed with the error function to an action in the bounded action space. The gradient of the Q-function at that action is the target signal for intermediate states X-tau sampled from the reciprocal process, and the control is trained by a regression loss.">
+      </div>
+      <figcaption>
+        <strong>Pipeline of Adjoint Matching Diffusion Policy (AMDP) training.</strong>
+        An action is sampled by <strong>(1)</strong> simulating the forward stochastic differential equation (SDE) from \(X_0 = 0\) to a terminal sample \(X_1 \sim \Pi^u_1(\cdot|s) \in \mathbb{R}^d\), and <strong>(2)</strong> error function squashing it to the bounded action space \(\mathcal{A} = [-1,1]^d\).
+        The target signal is <strong>(3)</strong> the scaled gradient of the \(Q\)-function, which applies <strong>(4)</strong> to intermediate states \(X_\tau\), sampled directly from the known reciprocal process \(\Pi^0_{\tau|1}\).
+        Finally, <strong>(5)</strong> the policy's control field \(u\) minimizes a regression loss, entirely avoiding backpropagation through the diffusion process.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<main>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Abstract</h2>
+    <p class="content">
+      Diffusion policies have recently emerged as a powerful paradigm for representing complex action distributions in reinforcement learning (RL). However, their application to online RL remains limited by the challenge of scalable training in the absence of ground-truth data, where standard optimization techniques such as score matching are not directly applicable. In this work, we introduce a highly efficient algorithm for optimizing diffusion policies by leveraging recent advances in stochastic optimal control. Our approach is based on adjoint matching, which enables simulation-free training and circumvents the need for explicit likelihood estimation or costly backpropagation through the diffusion process. Furthermore, we propose several extensions that improve the robustness and stability of the method in practical settings. Empirical results demonstrate that our approach achieves competitive performance while significantly reducing computational overhead, making diffusion policies more viable for online RL scenarios.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">Method</h2>
+    <p>
+      We frame diffusion policy optimization for maximum entropy RL as a stochastic optimal control problem and adapt adjoint matching to solve it. The resulting method, <strong>Adjoint Matching Diffusion Policy (AMDP)</strong>, has three advantages:
+    </p>
+    <ul>
+      <li>It uses a highly scalable regression objective involving the \(Q\)-score, similar to score-matching methods but theoretically grounded for RL.</li>
+      <li>It avoids costly backpropagation through the diffusion process, significantly reducing memory requirements.</li>
+      <li>Building on reciprocal adjoint matching, the optimization is simulation-free. Only the actions are needed, and they can be stored and reused for multiple gradient updates.</li>
+    </ul>
+
+    <h3 class="title is-5">Diffusion policy as a controlled SDE</h3>
+    <p>
+      The policy defines actions implicitly through a state-conditioned SDE with generation time \(\tau \in [0,1]\). The SDE is solved anew for every environment state, starting from a deterministic initial condition:
+    </p>
+    <div class="math-scroll">\[ \mathrm{d}X_\tau = \sigma(\tau)\,u(X_\tau, s, \tau)\,\mathrm{d}\tau + \sigma(\tau)\,\mathrm{d}B_\tau, \quad X_0 = 0, \quad a = f_{\mathrm{erf}}(X_1). \tag{1} \]</div>
+    <p>
+      The goal is a control \(u\) whose terminal distribution matches the maximum entropy target \(\pi^*(a|s) \propto \exp(Q(a,s)/\alpha)\).
+    </p>
+
+    <h3 class="title is-5">The AMDP objective</h3>
+    <p>
+      Adjoint matching (Domingo-Enrich et al.) solves this control problem with a fixed-point regression loss whose unique fixed point is the optimal control. Its reciprocal variant (Havens et al.) replaces simulated paths by terminal samples from the current control and intermediate states from the reference process. Conditioned on \(X_1\), these intermediate states follow a known Gaussian that can be sampled directly. This gives the loss
+    </p>
+    <div class="math-scroll">\[ \mathcal{L}^{s}_{\mathrm{AMDP}}(u) = \int_0^1 \mathbb{E}_{X_1\sim\Pi^{\bar u}_1,\, X_\tau\sim\Pi^0_{\tau|1}} \left[ \tfrac{1}{2} \left\| u(X_\tau,s,\tau) - \sigma(\tau)\nabla_{x}\tfrac{1}{\alpha}Q^{\pi}(f_{\mathrm{erf}}(X_1),s) \right\|^2 \right] \mathrm{d}\tau, \tag{2} \]</div>
+    <p>
+      where \(\bar u\) is the control with gradients stopped. Neither the \(Q\)-function nor the SDE needs to be re-evaluated for the intermediate states.
+    </p>
+
+    <h3 class="title is-5">Error function action squashing</h3>
+    <p>
+      Instead of the common \(\tanh\), we squash actions into \([-1,1]^d\) with a scaled error function, which is numerically more stable in our setting:
+    </p>
+    <div class="math-scroll">\[ f_{\mathrm{erf}}(x) = \bigl(\mathrm{erf}(k x_i)\bigr)_{i=1}^d, \qquad k = \Bigl(2 \int_0^1 \sigma^2(\tau)\,\mathrm{d}\tau\Bigr)^{-1/2}. \tag{3} \]</div>
+    <p>
+      With this \(k\), the Jacobian determinant is proportional to the Gaussian reference marginal \(\Pi^0_1\). The correction term between them is therefore constant, its gradient vanishes, and the objective reduces to (2).
+    </p>
+
+    <h3 class="title is-5">Tractable entropy for policy evaluation</h3>
+    <p>
+      The marginal entropy of a diffusion model is generally intractable. We use a lower bound that is tight if and only if the controlled process lies in the reciprocal class of the reference process, which holds at the fixed point of the policy improvement step:
+    </p>
+    <div class="math-scroll">\[ \mathcal{H}(\pi^u(a|s)) \geq \mathcal{L}^s_{\mathrm{ENT}}(u) = -\mathbb{E}_{X\sim \Pi^u}\left[\int_0^1 \tfrac{1}{2}\|u(X_\tau, s,\tau)\|^2\, \mathrm{d}\tau + \log \frac{\Pi^0_1(X_1|s)}{\left|\det J_f(X_1)\right|}\right]. \tag{4} \]</div>
+    <p>
+      It replaces the entropy in the soft Bellman backup and enables automatic temperature tuning:
+    </p>
+    <div class="math-scroll">\[ (\mathcal{T}^{\pi^u} Q)(a,s) = r(s,a) + \gamma\, \mathbb{E}_{s' \sim p,\, a' \sim \pi^u} \bigl[Q(a',s') + \alpha\, \mathcal{L}^{s'}_{\mathrm{ENT}}(u)\bigr]. \tag{5} \]</div>
+
+    <h3 class="title is-5">Trust-region updates</h3>
+    <p>
+      In on-policy RL the target distribution shifts rapidly, so we constrain how far the control can move from its previous iterate \(u_{\mathrm{old}}\):
+    </p>
+    <div class="math-scroll">\[ \min_u\ \mathcal{L}^s_{\mathrm{AMDP}}(u) \quad \mathrm{s.t.} \quad \underbrace{\int_0^1 \mathbb{E}\left[ \tfrac{1}{2}\|u(X_\tau,s,\tau)-u_{\mathrm{old}}(X_\tau,s,\tau)\|^2\right]\mathrm{d}\tau}_{\mathcal{L}^s_{\mathrm{TR}}(u)} \leq \varepsilon, \tag{6} \]</div>
+    <p>
+      with the expectation as in (2). We optimize the Lagrangian \(\mathcal{L}^s_{\mathrm{AMDP}}(u) + \lambda(\mathcal{L}^s_{\mathrm{TR}}(u) - \varepsilon)\), which preserves the unique fixed point of (2) for any \(\lambda \geq 0\). The off-policy experiments use (2) without a trust region.
+    </p>
+
+    <h3 class="title is-5">Algorithm sketch</h3>
+    <div class="algorithm">
+      <p><strong>Input:</strong> initial \(u\) and \(Q\). <strong>For each iteration:</strong></p>
+      <ol>
+        <li>Collect and store \((s, a, s', r, X_1)\).</li>
+        <li>Update \(Q\) via (5).</li>
+        <li>Compute and store \(\nabla_x Q(f_{\mathrm{erf}}(X_1),s)\).</li>
+        <li>Update \(u\) via (2), or via the Lagrangian of (6).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">Results</h2>
+    <p>
+      We evaluate AMDP on 63 highly parallelized environments from MuJoCo Playground, ManiSkill and HumanoidBench in the on-policy setting, and on 7 high-dimensional dog and humanoid tasks of the DeepMind Control (DMC) suite in the off-policy setting. Every experiment is repeated for ten seeds. We report the interquartile mean (IQM), with shaded regions showing 95% confidence intervals from stratified bootstrapping.
+    </p>
+
+    <h3 class="title is-5">On-policy performance</h3>
+    <figure class="paper-figure">
+      <div class="legend">
+        <span><i style="background:#1F77B4"></i>AMDP (Ours)</span>
+        <span><i style="background:#0B3C8C"></i>AMDP BoN (Ours)</span>
+        <span><i style="background:#C0392B"></i>DIME</span>
+        <span><i style="background:#8E44AD"></i>DPPO</span>
+        <span><i style="background:#DAA520"></i>FPO</span>
+        <span><i style="background:#707B7C"></i>PPO</span>
+        <span><i style="background:#FF7F0E"></i>REPPO</span>
+        <span><i style="background:#8D6E63"></i>SPO</span>
+      </div>
+      <div class="plot-grid">
+        <figure><img loading="lazy" src="./static/images/onpolicy_mjx_dmc.svg" alt="IQM score over environment steps on MuJoCo Playground DMC tasks."><figcaption>(a) MJX DMC</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/onpolicy_mjx_humanoid.svg" alt="IQM score over environment steps on MuJoCo Playground humanoid locomotion tasks."><figcaption>(b) MJX Humanoid</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/onpolicy_maniskill3.svg" alt="IQM score over environment steps on ManiSkill3 tasks."><figcaption>(c) ManiSkill3</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/onpolicy_humanoidbench.svg" alt="IQM score over environment steps on HumanoidBench tasks."><figcaption>(d) HumanoidBench</figcaption></figure>
+      </div>
+      <figcaption>
+        <strong>On-policy performance comparison.</strong> Aggregated IQM learning curves. AMDP BoN selects among \(N=16\) sampled actions with the \(Q\)-function during evaluation.
+      </figcaption>
+    </figure>
+    <ul>
+      <li><strong>MJX DMC:</strong> AMDP matches DIME's performance and converges slightly faster than REPPO in terms of sample efficiency.</li>
+      <li><strong>MJX Humanoid:</strong> AMDP starts learning significantly faster than all baselines, although REPPO eventually surpasses its final performance slightly. Reducing stochasticity during evaluation with Best-of-N sampling (AMDP BoN) lifts performance above all baselines.</li>
+      <li><strong>ManiSkill3:</strong> AMDP, DIME and REPPO perform similarly, whereas PPO and SPO perform worse.</li>
+      <li><strong>HumanoidBench:</strong> AMDP outperforms all baselines by a large margin even without Best-of-N sampling.</li>
+    </ul>
+
+    <h3 class="title is-5">Off-policy performance</h3>
+    <div class="side-by-side">
+      <div>
+        <p>
+          On the high-dimensional DMC dog and humanoid tasks, where sample efficiency is crucial, AMDP matches DIME's performance and converges slightly faster on the dog environments. This shows that the adjoint matching objective is a competitive policy optimization loss against DIME's reverse KL loss in the off-policy setting.
+        </p>
+      </div>
+      <figure class="paper-figure">
+        <div class="legend">
+          <span><i style="background:#1F77B4"></i>AMDP (Ours)</span>
+          <span><i style="background:#C0392B"></i>DIME</span>
+          <span><i style="background:#17BECF"></i>QSM</span>
+          <span><i style="background:#2CA02C"></i>Diff-QL</span>
+          <span><i style="background:#BCBD22"></i>Consistency-AC</span>
+        </div>
+        <img loading="lazy" src="./static/images/offpolicy_dmc.svg" alt="IQM score over environment steps on DMC dog and humanoid tasks in the off-policy setting.">
+        <figcaption><strong>Off-policy performance comparison.</strong> Aggregated IQM learning curves.</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="title is-5">Wallclock efficiency and scaling</h3>
+    <p>
+      AMDP has a roughly 10% update overhead compared to the fast Gaussian baseline REPPO, independent of the number of diffusion steps. Including diffusion sampling, a full iteration with the default 16 steps is 5% slower than REPPO on G1JoystickRoughTerrain and 36% slower on the extremely fast CartpoleBalance simulation, where sampling is most noticeable. In contrast, the reverse KL update is about ten times slower at 16 diffusion steps and over 70 times slower at 128.
+    </p>
+    <div class="table-container">
+      <table class="table is-narrow is-fullwidth runtime-table">
+        <caption>
+          Runtime per training iteration in ms. <em>Environment rollout</em> covers action sampling and environment stepping, <em>network update</em> the critic and actor updates. <em>Rev. KL</em> replaces the trust-region loss with DIME's reverse KL objective.
+        </caption>
+        <thead>
+          <tr><th rowspan="2">Environment</th><th rowspan="2">Phase</th><th rowspan="2" class="num">REPPO</th><th colspan="2" class="group">AMDP</th><th colspan="2" class="group">Rev. KL</th></tr>
+          <tr><th class="num">16 steps</th><th class="num">128 steps</th><th class="num">16 steps</th><th class="num">128 steps</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="2">CartpoleBalance</td><td>Environment rollout</td><td class="num">84</td><td class="num">404</td><td class="num">2&#8239;738</td><td class="num">404</td><td class="num">2&#8239;751</td></tr>
+          <tr><td>Network update</td><td class="num">948</td><td class="num">994</td><td class="num">991</td><td class="num">9&#8239;944</td><td class="num">71&#8239;659</td></tr>
+          <tr><td rowspan="2">G1JoystickRoughTerrain</td><td>Environment rollout</td><td class="num">9&#8239;605</td><td class="num">10&#8239;031</td><td class="num">13&#8239;097</td><td class="num">10&#8239;041</td><td class="num">13&#8239;129</td></tr>
+          <tr><td>Network update</td><td class="num">1&#8239;014</td><td class="num">1&#8239;113</td><td class="num">1&#8239;117</td><td class="num">11&#8239;421</td><td class="num">82&#8239;101</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      As a proof of concept, we also train diffusion policies with up to 106M parameters, approximately 300 times larger than the default. With the critic size kept fixed, scaling only the actor does not yield large performance improvements, but it validates that AMDP can train much larger actors efficiently. Its memory footprint is independent of the number of diffusion steps and small enough to allow training a 1B-parameter actor on a single GPU.
+    </p>
+
+    <h3 class="title is-5">Ablations</h3>
+    <figure class="paper-figure">
+      <div class="legend">
+        <span><i style="background:#332288"></i>4 steps</span>
+        <span><i style="background:#44AA99"></i>32 steps</span>
+        <span><i style="background:#117733"></i>128 steps</span>
+        <span><i style="background:#DDCC77"></i>16 steps, 20 batch reps</span>
+        <span><i style="background:#1F77B4"></i>AMDP (default)</span>
+        <span><i style="background:#6699CC"></i>AMDP-OU</span>
+        <span><i style="background:#AA4499"></i>Reverse-KL loss</span>
+        <span><i style="background:#C0392B"></i>DIME</span>
+      </div>
+      <div class="plot-grid">
+        <figure><img loading="lazy" src="./static/images/abl_steps_dmc.svg" alt="Ablation of diffusion steps and batch repetitions on MuJoCo Playground DMC tasks."><figcaption>(a) Diffusion steps, DMC</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_steps_humanoid.svg" alt="Ablation of diffusion steps and batch repetitions on MuJoCo Playground humanoid tasks."><figcaption>(b) Diffusion steps, humanoid</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_objective_dmc.svg" alt="Comparison of the adjoint matching loss, reverse-KL loss, AMDP-OU and DIME on MuJoCo Playground DMC tasks."><figcaption>(c) Objective, DMC</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_objective_humanoid.svg" alt="Comparison of the adjoint matching loss, reverse-KL loss, AMDP-OU and DIME on MuJoCo Playground humanoid tasks."><figcaption>(d) Objective, humanoid</figcaption></figure>
+      </div>
+      <figcaption>
+        <strong>Ablations on diffusion discretization and policy improvement objective.</strong> Panels (a, b) vary diffusion steps and reciprocal batch repetitions (one, unless noted). Panels (c, d) compare the default adjoint matching loss against reverse-KL optimization and DIME. Results are aggregated over MuJoCo Playground DMC and humanoid tasks.
+      </figcaption>
+    </figure>
+    <figure class="paper-figure">
+      <div class="legend">
+        <span><i style="background:#AA4466"></i>\(\varepsilon = 0.01\)</span>
+        <span><i style="background:#999933"></i>\(\varepsilon = 0.03\)</span>
+        <span><i style="background:#1B9E77"></i>\(\varepsilon = 0.3\)</span>
+        <span><i style="background:#D95F02"></i>\(\varepsilon = 1.0\)</span>
+        <span><i style="background:#C0392B"></i>\(\varepsilon = \infty\)</span>
+        <span><i style="background:#1F77B4"></i>AMDP (default)</span>
+        <span><i style="background:#882255"></i>tanh squash</span>
+      </div>
+      <div class="plot-grid">
+        <figure><img loading="lazy" src="./static/images/abl_tr_dmc.svg" alt="Ablation of the trust-region bound on MuJoCo Playground DMC tasks."><figcaption>(a) Trust-region size, DMC</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_tr_humanoid.svg" alt="Ablation of the trust-region bound on MuJoCo Playground humanoid tasks."><figcaption>(b) Trust-region size, humanoid</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_squash_dmc.svg" alt="Error function versus tanh squashing on MuJoCo Playground DMC tasks."><figcaption>(c) Squashing, DMC</figcaption></figure>
+        <figure><img loading="lazy" src="./static/images/abl_squash_humanoid.svg" alt="Error function versus tanh squashing on MuJoCo Playground humanoid tasks."><figcaption>(d) Squashing, humanoid</figcaption></figure>
+      </div>
+      <figcaption>
+        <strong>Ablations on trust-region size and action squashing.</strong> Panels (a, b) vary the trust-region bound \(\varepsilon\), including the no-trust-region setting \(\varepsilon = \infty\). Panels (c, d) compare error function squashing against tanh squashing. Results are aggregated over MuJoCo Playground DMC and humanoid tasks.
+      </figcaption>
+    </figure>
+    <ul>
+      <li><strong>Objective and SDE:</strong> Using DIME's reverse KL objective with our SDE and no trust region matches DIME, although DIME shows reduced variance. An Ornstein-Uhlenbeck reference process with our loss (AMDP-OU) performs comparably, so AMDP's performance is not inherent to the chosen SDE.</li>
+      <li><strong>Diffusion steps:</strong> Significantly fewer steps can help sample efficiency, at the cost of a small final performance degradation on the DMC tasks. The humanoid tasks require more steps and improve slightly with the added precision.</li>
+      <li><strong>Trust region:</strong> Performance drops significantly without a trust region (\(\varepsilon = \infty\)), whereas a smaller bound (\(\varepsilon = 0.01\)) converges more slowly.</li>
+      <li><strong>Squashing:</strong> \(\tanh\) performs similarly on the low-dimensional control tasks, but the error function improves performance significantly on the high-dimensional humanoid tasks.</li>
+    </ul>
+
+    <h3 class="title is-5">Limitations</h3>
+    <p>
+      AMDP uses a deterministic initial condition, whereas diffusion policies pretrained on offline data typically use a Gaussian prior. The Ornstein-Uhlenbeck extension lifts this restriction, but a full offline-to-online pipeline is left for future work. We also do not show that larger or more expressive actors improve performance, and whether jointly scaling actor and critic helps remains open.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">Code</h2>
+    <p>
+      The code is available at <a href="https://github.com/serathilg/amdp">github.com/serathilg/amdp</a>, with JAX and PyTorch implementations of AMDP and support for MuJoCo Playground, ManiSkill3 and HumanoidBench. A quick start, with uv:
+    </p>
+    <pre><code>git clone --recursive https://github.com/serathilg/amdp.git &amp;&amp; cd amdp
+uv sync                          # core: JAX + PyTorch, MuJoCo Playground, ManiSkill3
+uv sync --extra humanoid-bench   # additionally: HumanoidBench
+
+uv run src/jaxrl/amdp_reppo.py env=mjx_dmc env.name=CartpoleSwingup
+uv run src/torchrl/amdp_reppo.py env=maniskill env.name=PickCube-v1</code></pre>
+    <p>
+      See the repository's README for all entry points, configuration options and the archived experiment configurations.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">BibTeX</h2>
+    <div class="bibtex">
+      <button class="button is-small copy-button" id="copy-bibtex" type="button" hidden>
+        <svg class="fa" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span>
+      </button>
+      <!-- From the OpenReview entry (Nov 2026), de-anonymized. Update once OpenReview finalizes it after the camera-ready deadline. -->
+      <pre id="bibtex-entry"><code>@inproceedings{thilges2026scalable,
+  title     = {Scalable Maximum Entropy Reinforcement Learning for Diffusion Policies via Adjoint Matching},
+  author    = {Serge Thilges and Onur Celik and Denis Blessing and Emiliyan Gospodinov and Gerhard Neumann},
+  booktitle = {The Fortieth Annual Conference on Neural Information Processing Systems},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=h8DYJlF7Jt}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container is-max-desktop has-text-centered">
+    <p class="footer-links">
+      <a href="mailto:serge.thilges@kit.edu"><svg class="fa" aria-hidden="true"><use href="#i-mail"/></svg>serge.thilges@kit.edu</a>
+    </p>
+    <p class="is-size-7">
+      Website template adapted from <a href="https://nerfies.github.io">Nerfies</a>
+      (<a href="https://github.com/nerfies/nerfies.github.io">source</a>), licensed under
+      <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      Icons from <a href="https://fontawesome.com/license/free">Font Awesome Free</a> (CC BY 4.0).
+    </p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var button = document.getElementById('copy-bibtex');
+    var entry = document.getElementById('bibtex-entry');
+    if (!navigator.clipboard) return;
+    button.hidden = false;
+    var label = button.querySelector('span');
+    button.addEventListener('click', function () {
+      navigator.clipboard.writeText(entry.textContent).then(function () {
+        label.textContent = 'Copied';
+        setTimeout(function () { label.textContent = 'Copy'; }, 1500);
+      });
+    });
+  })();
+</script>
+</body>
+</html>
